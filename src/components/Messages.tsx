@@ -12,7 +12,7 @@ export const Messages: React.FC = () => {
       if (message.recipient === current)
         dispatch({ type: NEW_MESSAGE, payload: message });
     });
-  }, []);
+  }, [connection, dispatch,current]);
 
   return (
     <div className="chat">

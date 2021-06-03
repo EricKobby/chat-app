@@ -22,7 +22,7 @@ const Chat: React.FC = () => {
       }
     }
     init();
-  }, []);
+  }, [connection, dispatch]);
 
   useEffect(() => {
     if (connection.state === HubConnectionState.Connected) {
@@ -31,7 +31,7 @@ const Chat: React.FC = () => {
         name: user?.name,
       });
     }
-  }, [user]);
+  }, [user, connection]);
 
   return (
     <div className="chat-page">

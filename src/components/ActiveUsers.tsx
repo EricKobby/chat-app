@@ -14,13 +14,13 @@ export const ActiveUsers: React.FC = () => {
     connection.on("UserJoined", function (users) {
       dispatch({ type: USER_JOINED, payload: users });
     });
-  }, []);
+  }, [connection, dispatch]);
 
   useEffect(() => {
     if (user) {
       dispatch({ type: SET_CURRENT_USER, payload: user?.email });
     }
-}, [user]);
+}, [user, dispatch]);
 
   return (
     <div className="sidebar">
