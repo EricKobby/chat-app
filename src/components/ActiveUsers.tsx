@@ -20,7 +20,7 @@ export const ActiveUsers: React.FC = () => {
     if (user) {
       dispatch({ type: SET_CURRENT_USER, payload: user?.email });
     }
-}, [user, dispatch]);
+  }, [user, dispatch]);
 
   return (
     <div className="sidebar">
