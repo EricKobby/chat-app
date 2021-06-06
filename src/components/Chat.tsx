@@ -6,6 +6,7 @@ import { ActiveUsers } from "./ActiveUsers";
 import { MessageBox } from "./MessageBox";
 import { Messages } from "./Messages";
 import { Join } from "../services/UserService";
+import { HubConnectionState } from "@microsoft/signalr";
 
 const Chat: React.FC = () => {
   const { user } = useAuth0();
@@ -25,11 +26,13 @@ const Chat: React.FC = () => {
   }, [connection, dispatch]);
 
   useEffect(() => {
-    Join({
-      email: user?.email as string,
-      name: user?.name as string,
-      connectionId: connection.connectionId as string,
-    })
+    if (user && connection.state === HubConnectionState.Connected) {
+      Join({
+        email: user?.email as string,
+        name: user?.name as string,
+        connectionId: connection.connectionId as string,
+      });
+    }
   }, [user, connection]);
 
   return (
