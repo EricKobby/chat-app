@@ -12,10 +12,6 @@ export const Messages: React.FC = () => {
       if (message.recipient === current)
         dispatch({ type: NEW_MESSAGE, payload: message });
     });
-
-    return () =>{
-      connection.off("ReceiveMessage")
-    }
   }, [connection, dispatch,current]);
 
   return (

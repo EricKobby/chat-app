@@ -10,6 +10,7 @@ const newConnection = new HubConnectionBuilder()
 export interface User {
   name: string;
   email: string;
+  connectionId: string
 }
 
 export interface ChatState {

@@ -46,6 +46,11 @@ export function chatReducer(state: ChatState, action: ReducerAction): ChatState 
                 ...state,
                 current: payload
             }
+        case Actions.USER_LEFT:
+            return{
+                ...state,
+                users: state.users.filter(x => x.email !== payload.email)
+            }
         default: return state
     }
 }

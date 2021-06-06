@@ -1,10 +1,11 @@
 import React, { ChangeEvent, useState } from "react";
 import { useAppContext, useAppDispatch } from "../hooks";
 import { SEND_MESSAGE } from "../reducers/actions";
+import { sendMessage } from '../services/MessageService'
 
 export const MessageBox: React.FC = () => {
   const [message, setMessage] = useState("");
-  const { connection, selectedUser, current } = useAppContext();
+  const { selectedUser, current } = useAppContext();
   const dispatch = useAppDispatch();
 
   const handleChange = (e: ChangeEvent<HTMLInputElement>) => {
@@ -17,7 +18,7 @@ export const MessageBox: React.FC = () => {
       recipient: selectedUser,
       sender: current
     };
-    await connection.send("SendMessage", messageModel);
+    await sendMessage(messageModel);
     dispatch({ type: SEND_MESSAGE, payload: messageModel });
   };
 

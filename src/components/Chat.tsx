@@ -1,11 +1,12 @@
 import React, { useEffect } from "react";
 import { useAuth0 } from "@auth0/auth0-react";
-import { HubConnectionState } from "@microsoft/signalr";
 import { useAppContext, useAppDispatch } from "../hooks";
 import { SET_CONNECTION } from "../reducers/actions";
 import { ActiveUsers } from "./ActiveUsers";
 import { MessageBox } from "./MessageBox";
 import { Messages } from "./Messages";
+import { Join } from "../services/UserService";
+import { HubConnectionState } from "@microsoft/signalr";
 
 const Chat: React.FC = () => {
   const { user } = useAuth0();
@@ -25,11 +26,12 @@ const Chat: React.FC = () => {
   }, [connection, dispatch]);
 
   useEffect(() => {
-    if (connection.state === HubConnectionState.Connected) {
-      connection.send("Join", {
-        email: user?.email,
-        name: user?.name,
-      });
+    if (user && connection.state === HubConnectionState.Connected) {
+      Join({
+        email: user?.email as string,
+        name: user?.name as string,
+        connectionId: connection.connectionId as string,
+      }).then(() => console.log(connection.connectionId));
     }
   }, [user, connection]);
 
