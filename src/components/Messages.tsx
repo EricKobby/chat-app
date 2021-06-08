@@ -4,7 +4,7 @@ import { NEW_MESSAGE } from "../reducers/actions";
 import { MessageItem } from "./Message";
 
 export const Messages: React.FC = () => {
-  const { messages, connection, current } = useAppContext();
+  const { messages, connection, current, selectedUser } = useAppContext();
   const dispatch = useAppDispatch();
 
   const messagesEndRef = useRef<HTMLUListElement>(null);
@@ -18,16 +18,16 @@ export const Messages: React.FC = () => {
 
   useEffect(() => {
     connection.on("ReceiveMessage", (message: Message) => {
-      if (message.recipient === current)
+      if (message.recipient === current && message.sender === selectedUser)
         dispatch({ type: NEW_MESSAGE, payload: message });
     });
 
-    return () =>{
-      connection.off("ReceiveMessage")
-    }
-  }, [connection, dispatch, current]);
+    return () => {
+      connection.off("ReceiveMessage");
+    };
+  }, [connection, dispatch, current, selectedUser]);
 
-  useEffect(() => scrollToBottom(), [messages.length])
+  useEffect(() => scrollToBottom(), [messages.length]);
 
   return (
     <div className="chat">
