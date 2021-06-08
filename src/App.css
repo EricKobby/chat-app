@@ -1,8 +1,16 @@
+:root{
+  --dark: #fffafa;
+}
+
 * {
   padding: 0;
   margin: 0;
   box-sizing: border-box;
 }
+.dark-grey{
+  color: rgb(153, 152, 152) !important;
+}
+
 .login-wrap {
   height: 100vh;
   width: 100%;
@@ -40,36 +48,33 @@
   grid-area: sidebar;
   display: flex;
   flex-direction: column;
+}
+
+.sidebar .active-users{
+  flex: 70%;
   overflow-y: scroll;
   scroll-behavior: smooth;
 }
 
+.sidebar .blocked-users{
+  flex: 30%;
+  overflow-y: scroll;
+  scroll-behavior: smooth;
+}
 .sidebar,.chat{
   overflow-y: scroll;
   box-shadow: 0px 0px 5px inset rgba(0, 0, 0, 0.34);
 }
 
-.chat::-webkit-scrollbar {
+::-webkit-scrollbar {
   width: 0.25rem;
 }
 
-.chat::-webkit-scrollbar-track {
+::-webkit-scrollbar-track {
   background: #1e1e24;
 }
 
-.chat::-webkit-scrollbar-thumb {
-  background: #6649b8;
-}
-
-.sidebar::-webkit-scrollbar {
-  width: 0.25rem;
-}
-
-.sidebar::-webkit-scrollbar-track {
-  background: #1e1e24;
-}
-
-.sidebar::-webkit-scrollbar-thumb {
+::-webkit-scrollbar-thumb{
   background: #6649b8;
 }
 

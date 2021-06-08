@@ -1,7 +1,7 @@
 import React, { ChangeEvent, useState } from "react";
 import { useAppContext, useAppDispatch } from "../hooks";
 import { SEND_MESSAGE } from "../reducers/actions";
-import { sendMessage } from '../services/MessageService'
+import { sendMessage } from '../services/MessageService';
 
 export const MessageBox: React.FC = () => {
   const [message, setMessage] = useState("");
@@ -12,7 +12,8 @@ export const MessageBox: React.FC = () => {
     setMessage(e.target.value);
   };
 
-  const handleSendClick = async () => {
+  const handleSubmit = async (e: React.SyntheticEvent) => {
+    e.preventDefault()
     const messageModel: Message = {
       content: message,
       recipient: selectedUser,
@@ -20,10 +21,11 @@ export const MessageBox: React.FC = () => {
     };
     await sendMessage(messageModel);
     dispatch({ type: SEND_MESSAGE, payload: messageModel });
+    setMessage('')
   };
 
   return (
-    <div className="message">
+    <form className="message" method="post" onSubmit={handleSubmit}>
       <div className="input-group input-group-lg">
         <input
           type="text"
@@ -33,10 +35,10 @@ export const MessageBox: React.FC = () => {
           name="message"
           placeholder="Enter message"
         />
-        <button className="btn btn-outline-dark text-light" onClick={handleSendClick}>
+        <button type="submit" className="btn btn-outline-dark text-light">
           <h3>&raquo;</h3>
         </button>
       </div>
-    </div>
+    </form>
   );
 };

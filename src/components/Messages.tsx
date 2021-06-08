@@ -1,24 +1,42 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useRef } from "react";
 import { useAppContext, useAppDispatch } from "../hooks";
 import { NEW_MESSAGE } from "../reducers/actions";
-import { Message } from "./Message";
+import { MessageItem } from "./Message";
 
 export const Messages: React.FC = () => {
   const { messages, connection, current } = useAppContext();
   const dispatch = useAppDispatch();
 
+  const messagesEndRef = useRef<HTMLUListElement>(null);
+
+  const scrollToBottom = () => {
+    messagesEndRef.current?.scrollIntoView({
+      behavior: "smooth",
+      block: "end",
+    });
+  };
+
   useEffect(() => {
-    connection.on("ReceiveMessage", (message) => {
+    connection.on("ReceiveMessage", (message: Message) => {
       if (message.recipient === current)
         dispatch({ type: NEW_MESSAGE, payload: message });
     });
-  }, [connection, dispatch,current]);
+
+    return () =>{
+      connection.off("ReceiveMessage")
+    }
+  }, [connection, dispatch, current]);
+
+  useEffect(() => scrollToBottom(), [messages.length])
 
   return (
     <div className="chat">
-      <ul className="list-group border-0 bg-transparent d-flex flex-column">
+      <ul
+        className="list-group border-0 bg-transparent d-flex flex-column"
+        ref={messagesEndRef}
+      >
         {messages.map((message, index) => (
-          <Message
+          <MessageItem
             key={index}
             message={message.content}
             sender={message.sender}

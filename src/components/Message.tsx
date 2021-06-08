@@ -6,7 +6,7 @@ interface MessageProp {
   message: string;
 }
 
-export const Message: React.FC<MessageProp> = ({ message, sender }) => {
+export const MessageItem: React.FC<MessageProp> = ({ message, sender }) => {
   const { current } = useAppContext();
   const isCurrent = sender === current;
 

@@ -1,11 +1,14 @@
 import React, { useEffect } from "react";
-import { useAuth0 } from "@auth0/auth0-react";
+import { useAuth0, withAuthenticationRequired } from "@auth0/auth0-react";
 import { useAppContext, useAppDispatch } from "../hooks";
 import { SET_CONNECTION } from "../reducers/actions";
 import { ActiveUsers } from "./ActiveUsers";
 import { MessageBox } from "./MessageBox";
 import { Messages } from "./Messages";
 import { Join } from "../services/UserService";
+import Login from "./Login";
+import Sidebar from "./Sidebar";
+import BlockedUsers from "./BlockedUsers";
 import { HubConnectionState } from "@microsoft/signalr";
 
 const Chat: React.FC = () => {
@@ -16,29 +19,31 @@ const Chat: React.FC = () => {
   useEffect(() => {
     async function init() {
       try {
-        await connection.start();
-        dispatch({ type: SET_CONNECTION, payload: connection });
+        if (connection.state !== HubConnectionState.Connected) {
+          await connection.start();
+          dispatch({ type: SET_CONNECTION, payload: connection });
+        }
       } catch (err) {
         console.log(err);
       }
     }
     init();
-  }, [connection, dispatch]);
-
-  useEffect(() => {
     if (user && connection.state === HubConnectionState.Connected) {
       Join({
         email: user?.email as string,
         name: user?.name as string,
-        connectionId: connection.connectionId as string,
+        connectionId: connection.connectionId as string
       });
     }
-  }, [user, connection]);
+  }, [connection, dispatch, user, connection.connectionId]);
 
   return (
     <div className="chat-page">
       <div className="chat-container">
-        <ActiveUsers />
+        <Sidebar>
+          <ActiveUsers />
+          <BlockedUsers />
+        </Sidebar>
         <Messages />
         {selectedUser && <MessageBox />}
       </div>
@@ -46,4 +51,6 @@ const Chat: React.FC = () => {
   );
 };
 
-export default Chat;
+export default withAuthenticationRequired(Chat, {
+  onRedirecting: () => <Login />,
+});

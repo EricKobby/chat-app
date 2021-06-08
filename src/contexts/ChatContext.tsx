@@ -1,17 +1,6 @@
 import { HubConnection, HubConnectionBuilder } from "@microsoft/signalr";
 import { createContext, useReducer } from "react";
-import { chatReducer, ReducerAction } from "../reducers";
-
-const newConnection = new HubConnectionBuilder()
-  .withUrl(process.env.REACT_APP_HUB_URL as string)
-  .withAutomaticReconnect()
-  .build();
-
-export interface User {
-  name: string;
-  email: string;
-  connectionId: string
-}
+import { chatReducer } from "../reducers";
 
 export interface ChatState {
   users: Array<User>;
@@ -20,14 +9,22 @@ export interface ChatState {
   connection: HubConnection;
   messages: Array<Message>;
   selectedUser: string;
+  blockedUsers: Array<any>;
 }
+
+const newConnection = new HubConnectionBuilder()
+  .withUrl(process.env.REACT_APP_HUB_URL as string)
+  .withAutomaticReconnect()
+  .build();
+
 
 const initialState: ChatState = {
   users: [],
   current: "",
   connection: newConnection,
   messages: [],
-  selectedUser: ''
+  selectedUser: '',
+  blockedUsers: []
 };
 
 export const ChatContext = createContext(initialState);
