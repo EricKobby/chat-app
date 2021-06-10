@@ -1,12 +1,14 @@
 import React, { useEffect, useRef } from "react";
-import { useAppContext, useAppDispatch } from "../hooks";
-import { NEW_MESSAGE } from "../reducers/actions";
+import { useMessageSelector, useUsersSelector } from "../hooks";
 import { MessageItem } from "./Message";
+import { messageActions } from "../store/message.slice";
+import { useAppDispatch } from "../store";
+import { connection } from '../store/users.slice'
 
 export const Messages: React.FC = () => {
-  const { messages, connection, current, selectedUser } = useAppContext();
+  const { messages } = useMessageSelector();
+  const { current, selectedUser } = useUsersSelector();
   const dispatch = useAppDispatch();
-
   const messagesEndRef = useRef<HTMLUListElement>(null);
 
   const scrollToBottom = () => {
@@ -19,13 +21,13 @@ export const Messages: React.FC = () => {
   useEffect(() => {
     connection.on("ReceiveMessage", (message: Message) => {
       if (message.recipient === current && message.sender === selectedUser)
-        dispatch({ type: NEW_MESSAGE, payload: message });
+        dispatch(messageActions.addNewMessage(message));
     });
 
     return () => {
       connection.off("ReceiveMessage");
     };
-  }, [connection, dispatch, current, selectedUser]);
+  }, [dispatch, current, selectedUser]);
 
   useEffect(() => scrollToBottom(), [messages.length]);
 

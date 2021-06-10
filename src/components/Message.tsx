@@ -1,5 +1,5 @@
 import React from "react";
-import { useAppContext } from "../hooks";
+import { useUsersSelector } from "../hooks";
 
 interface MessageProp {
   sender: string;
@@ -7,7 +7,7 @@ interface MessageProp {
 }
 
 export const MessageItem: React.FC<MessageProp> = ({ message, sender }) => {
-  const { current } = useAppContext();
+  const { current } = useUsersSelector();
   const isCurrent = sender === current;
 
   const style = `list-group-item border-0 bg-transparent text-light d-flex ${

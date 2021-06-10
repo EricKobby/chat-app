@@ -1,26 +1,24 @@
 import { useAuth0 } from "@auth0/auth0-react";
 import React, { useEffect } from "react";
 import { listenToUserEvents } from "../events/signalR-user-events";
-import { useAppContext } from "../hooks";
+import { useUsersSelector } from "../hooks";
+import { useAppDispatch } from "../store";
 
 const Sidebar: React.FC = ({ children }) => {
   const { logout } = useAuth0();
-  const { connection, dispatch, current, blockedUsers } = useAppContext();
+  const { current, blockedUsers, isConnected } = useUsersSelector();
+  const dispatch = useAppDispatch();
 
   useEffect(() => {
-    listenToUserEvents({
-      connection,
-      current,
-      dispatch,
-      logout,
-      blockedUsers,
-    });
-
-    return () =>{
-        connection.off("UserJoined")
-        connection.off("UserBlocked")
+    if (isConnected) {
+      listenToUserEvents({
+        current,
+        dispatch,
+        logout,
+        blockedUsers,
+      });
     }
-  }, [connection, dispatch, logout, current, blockedUsers]);
+  }, [dispatch, logout, current, blockedUsers, isConnected]);
   return <div className="sidebar">{children}</div>;
 };
 

@@ -9,7 +9,7 @@ export const BlockUser = async (userEmail: string, currentUser: string) => {
     return await httpClient.post(generateUri("block"), { userEmail, currentUser })
 }
 
-export const UnBlockUser = async (userEmail: string, currentuser: string) => {
+export const unBlockUser = async (userEmail: string, currentuser: string) => {
     return await httpClient.post(generateUri("unblock"), { userEmail, currentuser })
 }
 

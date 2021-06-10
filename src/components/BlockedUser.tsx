@@ -1,18 +1,18 @@
 import React from "react";
-import { useAppContext, useAppDispatch } from '../hooks'
-import { UNBLOCK_USER } from "../reducers/actions";
-import { UnBlockUser } from "../services/UserService";
+import { useUsersSelector } from "../hooks";
+import { unBlockUser } from "../services/UserService";
+import { useAppDispatch } from "../store";
+import { userActions } from "../store/users.slice";
 
 const BlockedUser: React.FC<{ user: string }> = ({ user }) => {
-  
-    const dispatch = useAppDispatch()
-    const { current } = useAppContext()
+  const dispatch = useAppDispatch();
+  const { current } = useUsersSelector();
 
-    const handleUnblock = async (e: React.SyntheticEvent<HTMLSpanElement>) => {
+  const handleUnblock = async (e: React.SyntheticEvent<HTMLSpanElement>) => {
     e.preventDefault();
     e.stopPropagation();
-    dispatch({type: UNBLOCK_USER, payload: user})
-    await UnBlockUser(user, current)
+    dispatch(userActions.unblockUser(user));
+    await unBlockUser(user, current);
   };
   return (
     <button className="list-group-item d-flex justify-content-between align-items-center rounded-0 text-light bg-transparent">

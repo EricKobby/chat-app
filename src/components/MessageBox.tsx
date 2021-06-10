@@ -1,11 +1,12 @@
 import React, { ChangeEvent, useState } from "react";
-import { useAppContext, useAppDispatch } from "../hooks";
-import { SEND_MESSAGE } from "../reducers/actions";
-import { sendMessage } from '../services/MessageService';
+import { useUsersSelector } from "../hooks";
+import { messageActions } from "../store/message.slice";
+import { sendMessage } from "../services/MessageService";
+import { useAppDispatch } from "../store";
 
 export const MessageBox: React.FC = () => {
   const [message, setMessage] = useState("");
-  const { selectedUser, current } = useAppContext();
+  const { selectedUser, current } = useUsersSelector();
   const dispatch = useAppDispatch();
 
   const handleChange = (e: ChangeEvent<HTMLInputElement>) => {
@@ -13,15 +14,17 @@ export const MessageBox: React.FC = () => {
   };
 
   const handleSubmit = async (e: React.SyntheticEvent) => {
-    e.preventDefault()
-    const messageModel: Message = {
-      content: message,
-      recipient: selectedUser,
-      sender: current
-    };
-    await sendMessage(messageModel);
-    dispatch({ type: SEND_MESSAGE, payload: messageModel });
-    setMessage('')
+    e.preventDefault();
+    if (message !== "") {
+      const messageModel: Message = {
+        content: message,
+        recipient: selectedUser,
+        sender: current,
+      };
+      await sendMessage(messageModel);
+      dispatch(messageActions.addNewMessage(messageModel));
+      setMessage("");
+    }
   };
 
   return (

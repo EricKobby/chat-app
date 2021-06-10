@@ -1,18 +1,17 @@
-import { ADD_BLOCKED_USER, USER_BLOCKED, USER_JOINED, USER_LEFT } from '../reducers/actions';
+import { userActions } from '../store/users.slice'
 import { LogoutOptions } from '@auth0/auth0-react'
-import { HubConnection } from '@microsoft/signalr';
-
+import { AppDispatch } from '../store';
+import { connection } from '../store/users.slice'
 interface Subscription {
-    connection: HubConnection
     current: string
-    dispatch: any
+    dispatch: AppDispatch
     logout: (options?: LogoutOptions | undefined) => void;
     blockedUsers: Array<any>;
 }
 
 export const listenToUserEvents = (options: Subscription) => {
 
-    const { connection, current, dispatch, blockedUsers } = options
+    const { current, dispatch, blockedUsers } = options
 
 
     connection.on("UserJoined", (users, joinedUser) => {
@@ -23,12 +22,10 @@ export const listenToUserEvents = (options: Subscription) => {
         if (current === joinedUser.email) {
 
             activeUsers = activeUsers.filter(x => !blocked.some(a => a.blockedEmail === x.email))
-            dispatch({
-                type: USER_JOINED, payload: {
-                    users: activeUsers,
-                    blockedUsers: joinedUser.blockedUsers.map((b: any) => b.blockedEmail)
-                }
-            });
+            dispatch(userActions.updateUsers({
+                users: activeUsers,
+                blockedUsers: joinedUser.blockedUsers.map((b: any) => b.blockedEmail)
+            }));
         }
         else {
             //check if you have been blocked by user 
@@ -37,27 +34,25 @@ export const listenToUserEvents = (options: Subscription) => {
             if (BlockedUser) {
                 activeUsers = activeUsers.filter(x => x.email !== BlockedUser)
             }
-            dispatch({
-                type: USER_JOINED, payload: {
-                    users: activeUsers.filter((x: User) => x.email !== current),
-                    blockedUsers: blockedUsers
-                }
-            });
+            dispatch(userActions.updateUsers({
+                users: activeUsers.filter((x: User) => x.email !== current),
+                blockedUsers: blockedUsers
+            }));
         }
 
     });
 
     connection.on("UserLeft", (user) => {
-        dispatch({ type: USER_LEFT, payload: user });
+        dispatch(userActions.removeUser(user));
     });
 
     connection.on("UserBlocked", ({ userEmail, currentUser }) => {
         if (current === userEmail) {
-            dispatch({ type: USER_BLOCKED, payload: { currentUser } });
+            dispatch(userActions.blockUser(currentUser));
         }
 
         if (current === currentUser) {
-            dispatch({ type: ADD_BLOCKED_USER, payload: userEmail })
+            dispatch(userActions.addBlockedUser(userEmail))
         }
     });
 }

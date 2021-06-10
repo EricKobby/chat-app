@@ -1,17 +1,18 @@
 import React, { useEffect } from "react";
-import { useAppContext, useAppDispatch } from "../hooks";
-import { SET_CURRENT_USER } from "../reducers/actions";
+import { useUsersSelector } from "../hooks";
+import { userActions } from '../store/users.slice'
 import { ActiveUser } from "./ActiveUser";
 import { useAuth0 } from "@auth0/auth0-react";
+import { useAppDispatch } from "../store";
 
 export const ActiveUsers: React.FC = () => {
   const dispatch = useAppDispatch();
-  const { users } = useAppContext();
+  const { users } = useUsersSelector();
   const { user } = useAuth0();
 
   useEffect(() => {
     if (user) {
-      dispatch({ type: SET_CURRENT_USER, payload: user?.email });
+      dispatch(userActions.setCurrentUser(user?.email as string));
     }
   }, [user, dispatch]);
 

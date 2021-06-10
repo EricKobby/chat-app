@@ -1,10 +1,10 @@
 import React from "react";
-import { useAppContext } from "../hooks";
+import { useUsersSelector } from "../hooks";
 import BlockedUser from "./BlockedUser";
 
 const BlockedUsers: React.FC = () => {
 
-  const { blockedUsers } = useAppContext();
+  const { blockedUsers } = useUsersSelector();
 
   
   return (

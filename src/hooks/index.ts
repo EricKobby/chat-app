@@ -1,9 +1,4 @@
-import { useContext } from "react"
-import { ChatContext } from "../contexts/ChatContext"
+import { useAppSelector } from "../store"
 
-export const useAppContext = () => useContext(ChatContext)
-
-export const useAppDispatch = () => {
-    const { dispatch } = useContext(ChatContext)
-    return dispatch as any
-}
+export const useUsersSelector = () => useAppSelector(state => state.user)
+export const useMessageSelector = () => useAppSelector(state => state.message)
